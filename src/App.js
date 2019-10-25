@@ -1,24 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 
 function App() {
+  let [x, setX] = useState(10);
+
+  useEffect(() => {
+    let app = document.getElementsByClassName("App")[0];
+    console.log(`app is ${app}`);
+    app.addEventListener("mousedown", (e) => {
+      console.log("inside mousedown");
+      setX(x => x + 10);
+    });
+  }, []);
+
+  
+  
+  let containerStyle = {
+    position: "absolute",
+    width: "300px",
+    height: "30px",
+    backgroundColor: "#f7a"
+  };
+
+  let moveableStyle = {
+    position: "absolute",
+    top: "10px",
+    left: `${x}px`,
+    width: "10px",
+    height: "10px",
+    backgroundColor: "#8C1"
+  };
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div style={containerStyle}>
+        <div id="moveable" style={moveableStyle}></div>
+      </div>
     </div>
   );
 }

@@ -1,20 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const HorizontalSlider = ({
-    width = "300px",
-    height = "30px"
+    width = "300",
+    height = "30px",
+    minVal = 0,
+    maxVal = 100
   }) => {
-    let [x, setX] = useState(10);
+    let [x, setX] = useState({pixelX : 0});
     let moveableRef = useRef(null);
+    // The box that slides around has a background-clip on it, so it is bigger than it looks in the UI.
+    // I'll change it from a box soon, probably to a "needle" or something
+    const virtualSliderWidth = 24;
   
     useEffect(() => {
       const moveable = moveableRef.current;
   
       // I need to correct the mouse.x value so that the x is relative to the container
+      // containerLeft is the x value of the left edge of the container, measured from the edge of the window
       let containerLeft = null;
       const mouseMoveHandler = e => {
-        setX(e.clientX - containerLeft - 10);
-        console.log(`mousemove at ${e.clientX - containerLeft}`);
+        let newLeft = e.clientX - containerLeft - 10;
+        if(newLeft + (virtualSliderWidth) < width && newLeft > 0) {
+            setX({pixelX: newLeft});
+            console.log(`mousemove at ${e.clientX - containerLeft}`);
+        } else {
+            moveable.removeEventListener("mousemove", mouseMoveHandler);
+        }
       };
   
       const mouseDownHandler = e => {
@@ -40,7 +51,7 @@ const HorizontalSlider = ({
   
     let containerStyle = {
       position: "absolute",
-      width: width,
+      width: width + "px",
       height: height,
       backgroundColor: "#f7a"
     };
@@ -49,7 +60,7 @@ const HorizontalSlider = ({
       boxSizing: "border-box",
       position: "absolute",
       top: "3px",
-      left: `${x}px`,
+      left: `${x.pixelX}px`,
       padding: "5px",
       width: "24px",
       height: "24px",

@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import "./App.css";
 
 function App() {
-  let [x, setX] = useState(10);
   let moveableRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const moveable = moveableRef.current;
 
     // I need to correct the mouse.x value so that the x is relative to the container
     let containerLeft = null;
     const mouseMoveHandler = e => {
-      setX(e.clientX - containerLeft - 10);
-      console.log(`mousemove at ${e.clientX - containerLeft}`);
+      let newX = e.clientX - containerLeft - 10;
+      console.log(`setting left to ${newX}`);
+      console.log(`In mouseMove it's ${performance.now()}`);
+      moveable.style.left = `${newX}px`;
     };
 
     const mouseDownHandler = e => {
@@ -20,6 +21,7 @@ function App() {
         const container = e.currentTarget.parentElement;
         container && (containerLeft = container.getBoundingClientRect().x);
       }
+      console.log(`In mouseDown it's ${performance.now()}`);
       moveable.addEventListener("mousemove", mouseMoveHandler);
     };
 
@@ -47,7 +49,7 @@ function App() {
     boxSizing: "border-box",
     position: "absolute",
     top: "3px",
-    left: `${x}px`,
+    left: "0px",
     padding: "5px",
     width: "24px",
     height: "24px",

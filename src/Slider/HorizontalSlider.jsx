@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const HorizontalSlider = ({
+    onValueChanged = () => {},
     width = "300",
     height = "30px",
     minVal = 0,
@@ -22,12 +23,19 @@ const HorizontalSlider = ({
         let newLeft = e.clientX - containerLeft - 10;
         if(newLeft + (virtualSliderWidth) < width && newLeft > 0) {
             setX({pixelX: newLeft});
+            reportActualValue(newLeft);
             console.log(`mousemove at ${e.clientX - containerLeft}`);
         } else {
             moveable.removeEventListener("mousemove", mouseMoveHandler);
         }
       };
-  
+
+      const reportActualValue = (px) => {
+          const conversionFactor = maxVal / width;
+          const converted = Math.round(px * conversionFactor);
+          onValueChanged(converted);
+      }; 
+
       const mouseDownHandler = e => {
         if (containerLeft === null) {
           const container = e.currentTarget.parentElement;
@@ -50,7 +58,7 @@ const HorizontalSlider = ({
     }, []);
   
     let containerStyle = {
-      position: "absolute",
+      position: "relative",
       width: width + "px",
       height: height,
       backgroundColor: "#f7a"
